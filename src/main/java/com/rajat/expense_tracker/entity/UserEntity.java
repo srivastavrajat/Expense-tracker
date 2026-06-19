@@ -1,5 +1,6 @@
 package com.rajat.expense_tracker.entity;
 
+import com.rajat.expense_tracker.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,4 +15,7 @@ public class UserEntity {
     private long id;
     private String name;
     private String email;
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

@@ -5,6 +5,7 @@ import com.rajat.expense_tracker.dto.response.UserResponse;
 import com.rajat.expense_tracker.entity.UserEntity;
 import com.rajat.expense_tracker.exception.UserNotFoundException;
 import com.rajat.expense_tracker.service.UserService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping
-    UserResponse createUser(@RequestBody CreateUserRequest request){
+    UserResponse createUser(@Valid @RequestBody CreateUserRequest request){
         return userService.createUserEntity(request);
     }
 
@@ -31,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    UserResponse updateUser(@PathVariable Long id,@RequestBody CreateUserRequest Updaterequest){
+    UserResponse updateUser(@PathVariable Long id,@Valid @RequestBody CreateUserRequest Updaterequest){
         return userService.updateUserById(id,Updaterequest);
     }
 }
