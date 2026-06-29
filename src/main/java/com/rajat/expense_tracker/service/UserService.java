@@ -8,15 +8,15 @@ import com.rajat.expense_tracker.exception.UserNotFoundException;
 import com.rajat.expense_tracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -66,9 +66,10 @@ public class UserService {
 //        Page<UserResponse> response=users.map(user->new UserResponse(user.getId(),user.getName(),user.getEmail()));
 //        return response;
 //    }
-public Page<UserResponse> getAllUsers(int page, int size) {
-
-    Pageable pageable = PageRequest.of(page, size);
+public Page<UserResponse> getAllUsers(int page, int size,String sortBy,String direction) {
+    Sort sort= direction.equalsIgnoreCase("asc")?
+            Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
+    Pageable pageable = PageRequest.of(page, size ,sort);
 
     Page<UserEntity> users = userRepository.findAll(pageable);
 
@@ -82,4 +83,11 @@ public Page<UserResponse> getAllUsers(int page, int size) {
 
     return response;
 }
+public List<UserResponse> searchByKeyword(String keyword){
+        List<UserEntity> responses=userRepository.findByNameContaining(keyword);
+       List<UserResponse> response = responses.stream().map(x->new UserResponse(x.getId(),x.getName(),x.getEmail())).toList();
+       return response;
+}
+
+
 }
