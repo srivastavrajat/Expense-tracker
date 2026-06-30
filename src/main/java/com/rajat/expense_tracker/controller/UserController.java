@@ -46,7 +46,11 @@ public class UserController {
         return userService.getAllUsers(page,size,sortBy,direction);
     }
     @GetMapping("/search")
-    public List<UserResponse> getByKeyword(@RequestParam String key){
-        return userService.searchByKeyword(key);
+    public List<UserResponse> getByKeyword(@RequestParam String keyword){
+        return userService.searchByKeyword(keyword);
     }
+//    @GetMapping("/search/v1")
+//    public List<UserResponse> getByKeywordV1(@RequestParam String keyword){
+//        return userService.searchByKeywordV1(keyword);
+//    }
 }

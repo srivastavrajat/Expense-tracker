@@ -90,4 +90,9 @@ public List<UserResponse> searchByKeyword(String keyword){
 }
 
 
+//    public List<UserResponse> searchByKeywordV1(String keyword) {
+//        List<UserEntity> responses=userRepository.searchUsers(keyword);
+//        List<UserResponse> response = responses.stream().map(x->new UserResponse(x.getId(),x.getName(),x.getEmail())).toList();
+//        return response;
+//    }
 }
