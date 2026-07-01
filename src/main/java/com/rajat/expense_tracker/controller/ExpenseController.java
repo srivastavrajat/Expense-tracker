@@ -1,6 +1,7 @@
 package com.rajat.expense_tracker.controller;
 
 import com.rajat.expense_tracker.dto.request.CreateExpenseRequest;
+import com.rajat.expense_tracker.dto.request.ExpenseSearchRequest;
 import com.rajat.expense_tracker.dto.request.UpdateExpenseRequest;
 import com.rajat.expense_tracker.dto.response.DeleteResponse;
 import com.rajat.expense_tracker.dto.response.ExpenseResponse;
@@ -40,5 +41,9 @@ public class ExpenseController {
     @GetMapping("/summary")
     public List<ExpenseSummary> getSummary(){
         return expenseService.getExpenseSummary();
+    }
+    @GetMapping("/search")
+    public List<ExpenseResponse> searchExpense(ExpenseSearchRequest request){
+        return expenseService.searchExpense(request);
     }
 }

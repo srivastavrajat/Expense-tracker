@@ -1,6 +1,7 @@
 package com.rajat.expense_tracker.service;
 
 import com.rajat.expense_tracker.dto.request.CreateExpenseRequest;
+import com.rajat.expense_tracker.dto.request.ExpenseSearchRequest;
 import com.rajat.expense_tracker.dto.request.UpdateExpenseRequest;
 import com.rajat.expense_tracker.dto.response.DeleteResponse;
 import com.rajat.expense_tracker.dto.response.ExpenseResponse;
@@ -11,7 +12,9 @@ import com.rajat.expense_tracker.exception.ExpenseNotFoundException;
 import com.rajat.expense_tracker.exception.UserNotFoundException;
 import com.rajat.expense_tracker.repository.ExpenseRepository;
 import com.rajat.expense_tracker.repository.UserRepository;
+import com.rajat.expense_tracker.specifications.ExpenseSpecification;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,7 +43,7 @@ public class ExpenseService {
                 savedExpense.getAmount(),
                 savedExpense.getDescription(),
                 savedExpense.getCreatedAt(),
-                savedExpense.getUser().getName());
+                savedExpense.getUser().getId());
     }
     @Transactional
     public List<ExpenseResponse> getAllExpense(){
@@ -51,7 +54,7 @@ public class ExpenseService {
                         e.getAmount(),
                         e.getDescription(),
                         e.getCreatedAt(),
-                        e.getUser().getName()))
+                        e.getUser().getId()))
                 .toList();
     }
     public ExpenseResponse getExpenseById(Long id) throws ExpenseNotFoundException{
@@ -62,7 +65,7 @@ public class ExpenseService {
                 expense.getAmount(),
                 expense.getDescription(),
                 expense.getCreatedAt(),
-                expense.getUser().getName());
+                expense.getUser().getId());
     }
     @Transactional
     public ExpenseResponse updateExpense(Long id, UpdateExpenseRequest request){
@@ -79,7 +82,7 @@ public class ExpenseService {
                 expense.getAmount(),
                 expense.getDescription(),
                 expense.getCreatedAt(),
-                expense.getUser().getName());
+                expense.getUser().getId());
     }
 
     public DeleteResponse deleteExpense(Long id){
@@ -89,6 +92,27 @@ public class ExpenseService {
     }
     public List<ExpenseSummary> getExpenseSummary(){
         return expenseRepository.getExpenseSummary();
+    }
+    public List<ExpenseResponse> searchExpense(ExpenseSearchRequest request){
+        Specification<ExpenseEntity> spec=(root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+        if(request.minAmount()!=null){
+            spec=spec.and(ExpenseSpecification.hasMinAmount(request.minAmount()));
+        }
+        if(request.description()!=null){
+            spec=spec.and(ExpenseSpecification.hasDescription(request.description()));
+        }
+        if(request.userId()!=null){
+            spec=spec.and(ExpenseSpecification.hasUserId(request.userId()));
+        }
+        List<ExpenseEntity> expenses=expenseRepository.findAll(spec);
+       return expenses.stream()
+               .map(e -> new ExpenseResponse(
+                       e.getId(),
+                       e.getAmount(),
+                       e.getDescription(),
+                       e.getCreatedAt(),
+                       e.getUser().getId()))
+               .toList();
     }
 
 }
