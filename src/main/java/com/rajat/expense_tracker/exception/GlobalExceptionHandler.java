@@ -42,6 +42,11 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(errors.toString());
     }
+    @ExceptionHandler(ExpenseNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleExpenseNotFoundException(ExpenseNotFoundException e){
+        ErrorResponse error=new ErrorResponse(LocalDateTime.now(),e.getMessage(),HttpStatus.NOT_FOUND.value());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 
 
 }

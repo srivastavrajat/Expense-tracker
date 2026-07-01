@@ -8,5 +8,6 @@ public record ExpenseResponse(
         double amount,
         String description,
         LocalDateTime date,
-        Long userId
+        //Long userId,
+        String userName
 ) {}

@@ -1,7 +1,10 @@
 package com.rajat.expense_tracker.controller;
 
 import com.rajat.expense_tracker.dto.request.CreateExpenseRequest;
+import com.rajat.expense_tracker.dto.request.UpdateExpenseRequest;
+import com.rajat.expense_tracker.dto.response.DeleteResponse;
 import com.rajat.expense_tracker.dto.response.ExpenseResponse;
+import com.rajat.expense_tracker.dto.response.ExpenseSummary;
 import com.rajat.expense_tracker.service.ExpenseService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,5 +24,21 @@ public class ExpenseController {
     @GetMapping
     public List<ExpenseResponse> getAllExpense(){
         return expenseService.getAllExpense();
+    }
+    @GetMapping("/{id}")
+    public ExpenseResponse getExpense(@PathVariable Long id){
+        return expenseService.getExpenseById(id);
+    }
+    @PutMapping("/{id}")
+    public ExpenseResponse updateExpense(@PathVariable Long id,@RequestBody UpdateExpenseRequest request){
+        return expenseService.updateExpense(id,request);
+    }
+    @DeleteMapping("/{id}")
+    public DeleteResponse deleteExpense(@PathVariable Long id){
+        return expenseService.deleteExpense(id);
+    }
+    @GetMapping("/summary")
+    public List<ExpenseSummary> getSummary(){
+        return expenseService.getExpenseSummary();
     }
 }

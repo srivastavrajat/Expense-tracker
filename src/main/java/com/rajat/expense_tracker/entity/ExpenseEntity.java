@@ -20,7 +20,7 @@ public class ExpenseEntity {
     private String description;
     @CreationTimestamp
     private LocalDateTime createdAt;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private UserEntity user;
 }
