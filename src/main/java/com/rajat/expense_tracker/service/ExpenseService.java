@@ -94,7 +94,11 @@ public class ExpenseService {
         return expenseRepository.getExpenseSummary();
     }
     public List<ExpenseResponse> searchExpense(ExpenseSearchRequest request){
-        Specification<ExpenseEntity> spec=(root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+        Specification<ExpenseEntity> spec=(
+                root,
+                query,
+                criteriaBuilder)
+                -> criteriaBuilder.conjunction();
         if(request.minAmount()!=null){
             spec=spec.and(ExpenseSpecification.hasMinAmount(request.minAmount()));
         }
