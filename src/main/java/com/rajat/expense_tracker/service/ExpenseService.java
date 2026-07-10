@@ -14,6 +14,8 @@ import com.rajat.expense_tracker.repository.ExpenseRepository;
 import com.rajat.expense_tracker.repository.UserRepository;
 import com.rajat.expense_tracker.specifications.ExpenseSpecification;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ import java.util.*;
 
 @Service
 public class ExpenseService {
+    private static final Logger logger= LoggerFactory.getLogger(ExpenseService.class);
     ExpenseRepository expenseRepository;
     UserRepository userRepository;
     public ExpenseService(UserRepository userRepository,ExpenseRepository expenseRepository){
@@ -30,14 +33,25 @@ public class ExpenseService {
     }
 
     public ExpenseResponse createExpense(CreateExpenseRequest request){
+        logger.info("Received request to create expense or userId={}",request.userId());
         UserEntity user=userRepository.findById(request.userId())
-                .orElseThrow(()->new UserNotFoundException(request.userId()));
+                .orElseThrow(()->{
+                    logger.error("User not found with id={}",request.userId());
+                    return new UserNotFoundException(request.userId());
+                });
+        logger.debug("User found with id={}", user.getId());
+
+        logger.info("Creating expense for userId={}", user.getId());
+
         ExpenseEntity expense=new ExpenseEntity();
         expense.setAmount(request.amount());
         expense.setDescription(request.description());
         expense.setCreatedAt(request.createdAt());
         expense.setUser(user);
         ExpenseEntity savedExpense=expenseRepository.save(expense);
+        logger.info("Expense created successfully with id={} for userId={}",
+                savedExpense.getId(),
+                user.getId());
         return new ExpenseResponse(
                 savedExpense.getId(),
                 savedExpense.getAmount(),
