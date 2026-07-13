@@ -16,6 +16,8 @@ import com.rajat.expense_tracker.specifications.ExpenseSpecification;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -71,6 +73,7 @@ public class ExpenseService {
                         e.getUser().getId()))
                 .toList();
     }
+    @Cacheable(value="expenses",key="#id")
     public ExpenseResponse getExpenseById(Long id) throws ExpenseNotFoundException{
         ExpenseEntity expense=expenseRepository.
                                 findById(id).
@@ -81,6 +84,7 @@ public class ExpenseService {
                 expense.getCreatedAt(),
                 expense.getUser().getId());
     }
+    @CacheEvict(value="expenses",key="#id")
     @Transactional
     public ExpenseResponse updateExpense(Long id, UpdateExpenseRequest request){
         UserEntity user=userRepository.findById(request.userId()).orElseThrow(()->new UserNotFoundException(request.userId()));
@@ -98,7 +102,7 @@ public class ExpenseService {
                 expense.getCreatedAt(),
                 expense.getUser().getId());
     }
-
+@CacheEvict(value = "expenses",key="#id")
     public DeleteResponse deleteExpense(Long id){
         ExpenseEntity expense=expenseRepository.findById(id).orElseThrow(()->new ExpenseNotFoundException("Expense not found"));
         expenseRepository.delete(expense);

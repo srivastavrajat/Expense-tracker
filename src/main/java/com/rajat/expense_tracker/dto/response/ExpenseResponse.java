@@ -1,5 +1,6 @@
 package com.rajat.expense_tracker.dto.response;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -8,5 +9,5 @@ public record ExpenseResponse(
         double amount,
         String description,
         LocalDateTime date,
-        Long userId){}
+        Long userId)implements Serializable {}
         //String userName
