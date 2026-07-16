@@ -6,6 +6,7 @@ import com.rajat.expense_tracker.entity.ExpenseEntity;
 import com.rajat.expense_tracker.entity.UserEntity;
 import com.rajat.expense_tracker.repository.ExpenseRepository;
 import com.rajat.expense_tracker.repository.UserRepository;
+import com.rajat.expense_tracker.service.ExpenseEventProducer;
 import com.rajat.expense_tracker.service.ExpenseService;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -39,6 +41,8 @@ public class ExpenseIntegrationTest {
     ObjectMapper objectMapper;
     @Autowired
     UserRepository userRepository;
+    @MockitoBean
+    ExpenseEventProducer expenseEventProducer;
 
     @Test
     void shouldCreateExpense()throws Exception{

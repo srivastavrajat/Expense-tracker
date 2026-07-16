@@ -8,6 +8,7 @@ import com.rajat.expense_tracker.dto.response.ExpenseResponse;
 import com.rajat.expense_tracker.dto.response.ExpenseSummary;
 import com.rajat.expense_tracker.entity.ExpenseEntity;
 import com.rajat.expense_tracker.entity.UserEntity;
+import com.rajat.expense_tracker.event.ExpenseCreatedEvent;
 import com.rajat.expense_tracker.exception.ExpenseNotFoundException;
 import com.rajat.expense_tracker.exception.UserNotFoundException;
 import com.rajat.expense_tracker.repository.ExpenseRepository;
@@ -26,12 +27,14 @@ import java.util.*;
 
 @Service
 public class ExpenseService {
+    private final ExpenseEventProducer expenseEventProducer;
     private static final Logger logger= LoggerFactory.getLogger(ExpenseService.class);
     ExpenseRepository expenseRepository;
     UserRepository userRepository;
-    public ExpenseService(UserRepository userRepository,ExpenseRepository expenseRepository){
+    public ExpenseService(UserRepository userRepository,ExpenseRepository expenseRepository,ExpenseEventProducer expenseEventProducer){
         this.userRepository=userRepository;
         this.expenseRepository=expenseRepository;
+        this.expenseEventProducer=expenseEventProducer;
     }
 
     public ExpenseResponse createExpense(CreateExpenseRequest request){
@@ -51,6 +54,11 @@ public class ExpenseService {
         expense.setCreatedAt(request.createdAt());
         expense.setUser(user);
         ExpenseEntity savedExpense=expenseRepository.save(expense);
+        expenseEventProducer.publish(new ExpenseCreatedEvent(savedExpense.getId(),
+                savedExpense.getAmount(),
+                savedExpense.getDescription(),
+                savedExpense.getCreatedAt(),
+                savedExpense.getUser().getId()));
         logger.info("Expense created successfully with id={} for userId={}",
                 savedExpense.getId(),
                 user.getId());
